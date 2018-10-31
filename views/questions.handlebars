@@ -1,0 +1,187 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <p>This is quiz <span id="quiz-id">{{quiz}}</span></p>
+      <p>
+        Your answer for the last question was <span id="last-result"></span>
+      </p>
+      <h5>The last question was:</h5>
+      <p id="last-question"></p>
+      <h5>The correct answer was:</h5>
+      <p id="last-correct"></p>
+    </div>
+    <div class="col-md-6">
+      <div id="question-container">
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Similique, cupiditate ullam facere dolor quos porro molestiae, nemo consectetur nesciunt doloribus vel fugiat perspiciatis tempore! Facere laboriosam placeat culpa minus amet! lorem</p>
+      </div>
+      <div id="code-block-container">
+        <code>
+          var turkey = 52; &#10
+          function foo(bar) {
+            return bar * 2;
+          }
+          console.log(foo(turkey)); // 104
+        </code>
+      </div>
+      <hr>
+      <div id="answers-container">
+        <p id="choice1">CHOICE1 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente beatae praesentium, rem neque similique enim error vero, soluta consequuntur architecto ab maiores. Voluptates, laboriosam harum rem sequi quod obcaecati minus.</p>
+        <p id="choice2">CHOICE 2 hahahahahahahaha</p>
+        <p id="choice3">CHOICE 3</p>
+        <p id="choice4">CHOICE 4 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus natus, maxime ipsum quae officia repellat id soluta dolores fuga est similique reprehenderit nihil necessitatibus quas commodi quo ullam perspiciatis illo?</p>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <p>Correct: <span id="correct-display">0</span></p>
+      <p>Incorrect: <span id="incorrect-display">0</span></p>
+    </div>
+
+  </div>
+</div>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+ ></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.5.1/marked.min.js"></script>
+<script>
+  // TODO: 
+  // handle possible incorrect quizId
+  // fix answerWasCorrect msg
+  // BUG: four answer choices dont display on questions with code snippets
+  const quizId = document.querySelector("#quiz-id").textContent;
+  const questionDisplay = document.querySelector("#question-container");
+  const codeBlockDisplay = document.querySelector("#code-block-container");
+  const answerDisplay = document.querySelector("#answers-container");
+  const correctDisplay = document.querySelector("#correct-display");
+  const incorrectDisplay = document.querySelector("#incorrect-display");
+  const lastResultDisplay = document.querySelector("#last-result");
+  const lastQuestionDisplay = document.querySelector("#last-question");
+  const lastCorrectDisplay = document.querySelector("#last-correct");
+  let questIndex = 0;
+  let positionOfCorrectAnswer;
+  let quests;
+  let numberCorrect = 0;
+  let numberIncorrect = 0;
+  let questsLength;
+  
+  function getQuizQuestions(quizId) {
+    console.log("getQuizQuestionsCalled");
+    $.ajax({
+      type: "GET",
+      url: "../api/quiz/" + quizId
+    }).then((data)=>{
+      console.log(data);
+      quests = data;
+      questsLength = quests.length;
+      displayNew(data, questIndex);
+    }).catch((err)=>{
+      console.log(err);
+    });
+  }
+
+  // main display functions
+  function displayNew(quests, index){
+    console.log("displayNewCalled");
+    clearChildren(questionDisplay);
+    clearChildren(codeBlockDisplay);
+    clearChildren(answerDisplay);
+    if (index < questsLength){
+    writeQuestionToPage(quests[index]);
+    writeAnswersToPage(quests[index]);
+    if (quests[index].codeBlock) writeCodeBlockToPage(quests[index]);
+    } else {
+      displayFinalMsg();
+    }
+  }
+
+  function writeQuestionToPage(q) {
+    console.log("write question to page called");
+    const paragraph = document.createElement("p");
+    paragraph.textContent = q.question;
+    questionDisplay.appendChild(paragraph);
+  }
+
+  function writeAnswersToPage(q) {
+    // pick random spot for correct answer
+    console.log("write answers to page called");
+    positionOfCorrectAnswer = Math.floor(Math.random() * 4);
+    const ansArr = [q.correct, q.incorrect1, q.incorrect2, q.incorrect3];
+    swapElements(ansArr, 0, positionOfCorrectAnswer);
+    for (let i = 0; i < ansArr.length; i++) {
+      let answerChoice = document.createElement("p");
+      answerChoice.value = i;
+      answerChoice.textContent = ansArr[i];
+      answerChoice.classList.add("answer-choice");
+      answerChoice.addEventListener("click",(e)=>{
+        handleAnswer(e.target.value);
+      });
+      answerDisplay.appendChild(answerChoice);
+    }
+  }
+
+  function writeCodeBlockToPage(q) {
+    const block = document.createElement("code");
+    block.textContent = q.codeBlock;
+    codeBlockDisplay.appendChild(block);
+  }
+
+  function handleAnswer(choice){
+    console.log("handleAnswered call, choice and poca: ", choice, positionOfCorrectAnswer);
+    let answerWasCorrect = choice == positionOfCorrectAnswer;
+    sendData(quests[questIndex].id, answerWasCorrect)
+    answerWasCorrect ? numberCorrect++ : numberIncorrect++;
+    correctDisplay.textContent = numberCorrect;
+    incorrectDisplay.textContent = numberIncorrect;
+    // set feedback
+    setFeedback(quests[questIndex], answerWasCorrect);
+
+    //display new
+    displayNew(quests, ++questIndex);
+  }
+
+  function sendData(questionId, answerWasCorrect){
+    console.log("sendData called");
+    const outboundData = {
+      id: questionId,
+      result: answerWasCorrect ? "correct" : "incorrect"
+    }
+    $.ajax({
+      type: "POST",
+      url: "../api/questions/result",
+      data: outboundData
+    }).then((res)=>{
+      console.log(res);
+    });
+  }
+  function setFeedback(q, answerWasCorrect){
+    console.log("setFeedback called")
+    lastResultDisplay.textContent = answerWasCorrect;
+    lastQuestionDisplay.textContent = q.question;
+    lastCorrectDisplay.textContent = q.correct;
+  }
+
+  function displayFinalMsg(){
+    questionDisplay.textContent = "Quiz completed. Go back to your stats page to see how your progress has changed";
+    const newLink = document.createElement("a");
+    newLink.href="../stats";
+    newLink.textContent = "Click here to see your updated stats!";
+    answerDisplay.appendChild(newLink);
+  }
+
+  // utility functions
+  function clearChildren(parent) {
+    while(parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+  }
+
+  function swapElements(arr, i, j){
+    let tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+
+  getQuizQuestions(quizId);
+  
+
+
+</script>

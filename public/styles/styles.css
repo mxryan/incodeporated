@@ -1,0 +1,247 @@
+.list-group-item {
+  line-height: 2.5;
+}
+
+
+body {
+  font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  background: rgb(182, 255, 47);
+  transition:all .8s ease-in-out;  
+}
+
+h1, h2{
+    width: 100%;
+    font-size: 77px;
+    margin: 125px auto;
+    text-align: center;
+    color: blueviolet;
+    text-shadow: 0px 2px 2px BLUE,
+                 0px 4px 2px GREEN,
+                 0px 6px 2px YELLOW,
+                 0px 8px 2px RED,
+                 0px 10px 2px PINK,
+                 0px 12px 2px orange,
+                 0px 14px 2px BROWN,
+                 0px 16px 6px rgba(100, 100, 100, 0.4),
+                 0px 9px 5px rgba(100, 100, 100, 0.1),
+                 0px 10px 7px rgba(100, 100, 100, 0.15),
+                 0px 11px 9px rgba(100, 100, 100, 0.2),
+                 0px 12px 11px rgba(100, 100, 100, 0.25),
+                 0px 13px 15px rgba(100, 100, 100, 0.3);
+ transition:all .8s ease-in-out;  
+  -o-transition:all .8s ease-in-out;  
+  -moz-transition:all .8s ease-in-out;  
+  -webkit-transition:all .8s ease-in-out;
+}
+
+
+@media screen and (max-width:768px) { 
+body {
+    
+    background:red;
+  }
+  h1, {
+    font-size:90px;
+  }
+}
+
+@media screen and (max-width:480px) { 
+body {
+    
+    background:yellow;
+  }
+  h1, {
+    font-size:50px;
+  }
+};
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.ball {
+  background: radial-gradient(farthest-corner at 60px 45px, #aaa 0%, purple 50%);
+  border-radius: 50%;
+  height: 200px;
+  width: 200px;
+}
+
+.ball-shadow {
+  background: radial-gradient(50% 50%, purple 0%, #fff 100%);
+  height: 50px;
+  width: 200px;
+}
+
+.bouncy-castle {
+  height: 50%;
+  left: 50%;
+  position: absolute;
+}
+
+.bouncy-castle .ball-shadow {
+  -webkit-animation-direction: alternate;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-name: grow;
+  -webkit-animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-duration: 1s;
+  animation-name: grow;
+  animation-iteration-count: infinite;
+  bottom: 0;
+  position: absolute;
+  margin-left: -100px;
+}
+
+.bouncy-castle .ball {
+  -webkit-animation-direction: alternate;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-name: bounce;
+  -webkit-animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-duration: 1s;
+  animation-name: bounce;
+  animation-iteration-count: infinite;
+  margin-left: -100px;
+  position: absolute;
+}
+
+@-webkit-keyframes grow {
+  from {
+    bottom: 0;
+    margin-left: -100px;
+    height: 50px;
+    opacity: 1;
+    width: 200px;
+  }
+
+  to {
+    bottom: -15px;
+    margin-left: -150px;
+    height: 80px;
+    opacity: 0.4;
+    width: 300px;
+  }
+}
+
+@keyframes grow {
+  from {
+    bottom: 0;
+    margin-left: -100px;
+    height: 50px;
+    width: 200px;
+  }
+
+  to {
+    bottom: 20px;
+    margin-left: 0;
+    height: 10px;
+    width: 15px;
+  }
+}
+
+@-webkit-keyframes bounce {
+  from {
+    bottom: 20px;
+  }
+
+  to {
+    bottom: 100%;
+  }
+}
+
+@keyframes bounce {
+  from {
+    bottom: 20px;
+  }
+
+  to {
+    bottom: 100%;
+  }
+};
+
+
+#container {
+  width: 50vw;
+  height: 50vh;
+  max-width: 50vh;
+  max-height: 50vw;
+  background-color: white;
+  position: absolute; float: left;
+  margin: auto;
+  left: 0; right: 0; top: 0; bottom: 0;
+  perspective: 750px;
+}
+.cube {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  transform-style: preserve-3d;
+  background-color: #333;
+  backface-visibility: hidden;
+}
+.cube div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  margin: auto;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: block;
+  border-radius: 5%;
+  background-color: #000;
+  backface-visibility: hidden;
+}
+.cube div::after {
+  content: "";
+  width: 90%;
+  height: 90%;
+  position: absolute;
+  margin: auto;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: block;
+  background-color: black;
+  border-radius: 5%;
+  backface-visibility: hidden;
+}
+.cube .front  { transform: rotateY(   0deg ) translateZ( 32px ); }
+.cube .back   { transform: rotateX( 180deg ) translateZ( 32px ); }
+.cube .right  { transform: rotateY(  90deg ) translateZ( 32px ); }
+.cube .left   { transform: rotateY( -90deg ) translateZ( 32px ); }
+.cube .top    { transform: rotateX(  90deg ) translateZ( 32px ); }
+.cube .bottom { transform: rotateX( -90deg ) translateZ( 32px ); }
+.red .front::after  { background-color: purple; }
+.red .back::after   { background-color: yellow; }
+.red .right::after  { background-color: blue; }
+.red .left::after   { background-color: #393; }
+.red .top::after    { background-color: #fff; }
+.red .bottom::after { background-color: orange; }
+.rubikscube {
+  width: 33%;
+  height: 33%;
+  position: absolute;
+  margin: auto;
+  left: 0; right: 0; top: 0; bottom: 0;
+  -webkit-animation: show 10s linear 0s infinite;
+  animation: show 10s linear 0s infinite;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+@-webkit-keyframes show {
+  from {-webkit-transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);}
+  to {-webkit-transform: rotateX(360deg) rotateY(720deg) rotateZ(720deg);}
+}
+@keyframes show {
+  from {transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);}
+  to {transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);}
+};
+
+
+/* testing */
+
+
+
+
+
+
+
